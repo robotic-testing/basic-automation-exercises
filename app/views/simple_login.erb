@@ -1,0 +1,87 @@
+
+<div class="row justify-content-center mb-5">
+  <div class="col-10">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Simple Login</h5>
+        <p class="card-text">
+          This page contains a login form with very basic validation,
+          where email and password fields are required and email should be
+          a valid, displaying validation messages when submitting empty fields.
+        </p>
+        <p class="card-text">
+          There is no verification of correct email and password, anything can be type.
+          Once the login button is clicked, a success and welcome messages are displayed.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-6">
+    <% if @submitted %>
+      <div class="alert alert-success alert-dismissible" role="alert">
+        Login successfully!
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <p class="card-text">
+            Welcome, <%= @user['email'] %>!
+          </p>
+          <a href="/simple-login">Return to form</a>
+        </div>
+      </div>
+    <% end %>
+
+    <% if !@submitted %>
+      <div class="card">
+        <div class="card-header">User Login</div>
+        <div class="card-body">
+          <form method="GET" class="needs-validation" novalidate>
+            <div class="row mb-3">
+              <label for="email" class="col-sm-3 col-form-label">Email</label>
+              <div class="col-sm-9">
+                <input type="email" name="user[email]" class="form-control" id="email" data-testid="loginEmail" required>
+                <div class="invalid-feedback">Please enter a valid email</div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label for="password" class="col-sm-3 col-form-label">Password</label>
+              <div class="col-sm-9">
+                <input type="password" name="user[password]" class="form-control" id="password" data-testid="loginPassword" required>
+                <div class="invalid-feedback">Please enter a password</div>
+              </div>
+            </div>
+            <input type="hidden" name="s" value="1" />
+            <button type="submit" class="btn btn-primary">Login</button>
+          </form>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+// JavaScript for disabling form submissions if there are invalid fields
+(function () {
+  'use strict';
+
+  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+  var forms = document.querySelectorAll('.needs-validation');
+
+  // Loop over them and prevent submission
+  Array.prototype.slice.call(forms)
+    .forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
+        form.classList.add('was-validated')
+      }, false)
+    })
+})()
+</script>
