@@ -1,0 +1,105 @@
+<% content_for :content_javascript_head do %>
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<% end %>
+
+<div class="row justify-content-center mb-5">
+  <div class="col-10">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Todo App</h5>
+        <p class="card-text">
+          The todo app has the following features:
+          <ul>
+            <li>Create, remove and complete tasks.</li>
+            <li>Empty task is not allowed and it has maximum of 100 characters.</li>
+            <li>Completed tasks go to the bottom of the list.</li>
+          </ul>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-6">
+    <div class="list-group" id="todoApp">
+      <label class="list-group-item">
+        <input type="text" class="form-control w-100 border-0" ref="newTaskInput"
+               placeholder="Add a new task..."
+               title="Type the task and hit enter to save"
+               v-on:keyup.enter="onNewTaskInputEnter"
+               v-model.trim="newTask"
+               maxlength="100"
+        >
+      </label>
+      <label class="list-group-item d-flex gap-3"
+             v-for="todo in orderedTasks" :key="todo.id"
+             v-bind:class="{ 'bg-light': todo.completed }"
+      >
+
+        <input class="form-check-input flex-shrink-0" type="checkbox"
+               style="font-size: 1.375em;"
+               v-model="todo.completed"
+        >
+
+        <span class="pt-1 form-checked-content"
+              v-bind:class="{ 'text-muted text-decoration-line-through': todo.completed }"
+        >
+          {{ todo.text }}
+        </span>
+
+        <a href="javascript:void(0)" class="ms-auto p-1" title="Remove task"
+           v-on:click="onRemoveClick(todo.id)"
+        >
+          <i class="fas fa-trash-alt"></i>
+        </a>
+      </label>
+      <label class="list-group-item d-flex bg-light" v-if="isTodoListEmpty()">
+        <p class="mb-0 text-muted">
+          <small><em>There are no tasks created</em></small>
+        </p>
+      </label>
+    </div>
+  </div>
+</div>
+
+<% content_for :content_javascript_bottom do %>
+<script>
+  let todoApp = new Vue({
+    el: '#todoApp',
+    data: {
+      newTask: '',
+      todoList: []
+    },
+    mounted() {
+      this.focusInput();
+    },
+    computed: {
+      orderedTasks: function () {
+        // Sorting the todo list with not completed task (completed = false) coming first
+        this.todoList = this.todoList.sort((x, y) => { return x.completed - y.completed });
+        return this.todoList;
+      }
+    },
+    methods: {
+      onNewTaskInputEnter: function() {
+        if(this.newTask.length === 0){
+            return;
+        }
+
+        this.todoList.push({ id: Date.now(), text: this.newTask, completed: false });
+        this.newTask = '';
+      },
+      onRemoveClick: function (taskId) {
+        this.todoList = this.todoList.filter(task => task.id !== taskId);
+      },
+      isTodoListEmpty: function() {
+        return this.todoList.length === 0;
+      },
+      focusInput() {
+          this.$refs.newTaskInput.focus();
+      }
+    }
+  });
+</script>
+<% end %>
