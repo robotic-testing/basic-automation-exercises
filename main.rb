@@ -25,4 +25,8 @@ class AutomationInPracticeApp < Sinatra::Base
   get '/todo' do
     erb :todo
   end
+
+  get '/skeletons' do
+    erb :skeletons
+  end
 end

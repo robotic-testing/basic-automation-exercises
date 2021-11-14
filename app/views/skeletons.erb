@@ -1,0 +1,91 @@
+<% content_for :content_javascript_head do %>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<% end %>
+
+<div class="row justify-content-center mb-5">
+  <div class="col-10">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Skeletons/Content Placeholder</h5>
+        <p class="card-text">
+          Skeletons can enhance the experience of an application by distracting users a few moments,
+          indicating something may still be loading.
+        </p>
+        <p class="card-text">
+          This particular exercise has a random delay,
+          that can vary from <em>1000</em> to <em>5000</em> milliseconds.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row justify-content-center mb-2" id="skeletonsApp">
+  <div class="row justify-content-center" >
+    <template v-if="loading">
+      <div class="col-4 mb-2 skeletons-container" v-for="skeleton in expectedContent">
+        <div class="card" aria-hidden="true">
+          <svg class="bd-placeholder-img card-img-top" width="100%" height="180"
+               xmlns="http://www.w3.org/2000/svg" role="img"
+               :aria-label="'Skeleton ' + skeleton"
+               preserveAspectRatio="xMidYMid slice" focusable="false">
+            <title>Skeleton {{skeleton}}</title>
+            <rect width="100%" height="100%" fill="#868e96"></rect>
+          </svg>
+          <div class="card-body">
+            <h5 class="card-title placeholder-glow">
+              <span class="placeholder col-6"></span>
+            </h5>
+            <p class="card-text placeholder-glow">
+              <span class="placeholder col-7"></span>
+              <span class="placeholder col-4"></span>
+              <span class="placeholder col-4"></span>
+              <span class="placeholder col-6"></span>
+              <span class="placeholder col-8"></span>
+            </p>
+            <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-6"></a>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <template v-else>
+      <div class="col-4 mb-2" v-for="contentItem in contentList">
+        <div class="card">
+          <img :src="contentItem.img" class="card-img-top" alt="...">
+
+          <div class="card-body">
+            <h5 class="card-title">{{ contentItem.title }}</h5>
+            <p class="card-text"><small>{{ contentItem.synopsis }}</small></p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+      </div>
+    </template>
+  </div>
+</div>
+
+<% content_for :content_javascript_bottom do %>
+<script>
+  let skeletonsApp = new Vue({
+    el: '#skeletonsApp',
+    data: {
+      loading: true,
+      expectedContent: 3,
+      contentList: []
+    },
+    mounted() {
+      const randomDelay = Math.floor(Math.random() * 4000) + 1000;
+
+      setTimeout(() => {
+        this.loading = false;
+        this.contentList = Array.from({ length: this.expectedContent }, () => ({
+            img: 'images/ready.jpg',
+            title: 'Lorem Ipsum',
+            synopsis: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse viverra aliquet tincidunt. Praesent eget venenatis sapien. Nam dictum ipsum et.'
+        }));
+      }, randomDelay);
+    }
+  });
+</script>
+<% end %>
