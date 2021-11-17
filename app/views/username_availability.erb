@@ -1,0 +1,90 @@
+<% content_for :content_javascript_head do %>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+<% end %>
+
+<div class="row justify-content-center mb-5">
+  <div class="col-10">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Username Availability</h5>
+        <p class="card-text">
+          This particular exercise check if a typed username is valid or not.
+          For invalid username, type <code>admin</code> or <code>superadmin</code>.
+        </p>
+        <p class="card-text">
+          After typing, it will wait for 500 milliseconds before starting a request to verify the username typed.
+          If new characters are typed, the request will be canceled and a new one will start after the 500 ms again.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-6" id="usernameAvailability" v-bind:class="{ 'is-loading': isLoading }">
+
+    <input type="text" class="form-control"
+           placeholder="Type at least 3 characters to verify"
+           v-model.trim="username"
+           v-bind:class="valid"
+           ref="username"
+           maxlength="100"
+    >
+
+    <div class="spinner-grow spinner-grow-sm" v-if="isLoading"></div>
+
+    <div class="valid-feedback">Looks good!</div>
+    <div class="invalid-feedback">Username not allowed.</div>
+  </div>
+</div>
+<script>
+  let usernameAvailability = new Vue({
+    el: '#usernameAvailability',
+    data: {
+      isLoading: false,
+      username: '',
+      valid: '',
+      cancelTokenSource: undefined
+    },
+    watch: {
+      username: function () {
+        this.valid = '';
+
+        if (this.cancelTokenSource !== undefined) {
+          this.cancelTokenSource.cancel();
+        }
+
+        this.debouncedGetAnswer()
+      }
+    },
+    created: function () {
+      this.debouncedGetAnswer = _.debounce(this.getAnswer, 500)
+    },
+    methods: {
+      getAnswer: function () {
+        if(this.username.length <= 2){
+          return;
+        }
+
+        this.isLoading = true;
+
+        this.cancelTokenSource = axios.CancelToken.source();
+
+        axios.get('/username-availability/check', {
+          params: { username: this.username },
+          cancelToken: this.cancelTokenSource.token
+        }).then((response) => {
+          this.valid = response.data.allowed ? 'is-valid' : 'is-invalid';
+        }).catch(() => {
+        }).finally(() => this.isLoading = false);
+      }
+    },
+    mounted() {
+      this.$refs.username.focus();
+    },
+  });
+</script>
+<% content_for :content_javascript_bottom do %>
+<% end %>

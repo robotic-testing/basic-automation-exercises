@@ -78,7 +78,7 @@
     computed: {
       orderedTasks: function () {
         // Sorting the todo list with not completed task (completed = false) coming first
-        this.todoList = this.todoList.sort((x, y) => { return x.completed - y.completed });
+        this.todoList = this.todoList.sort((x, y) => x.completed - y.completed);
         return this.todoList;
       }
     },

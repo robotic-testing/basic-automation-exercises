@@ -2,3 +2,17 @@ main > .container {
     padding: 80px 15px 0;
     max-width: 960px;
 }
+
+.is-loading {
+    position: relative;
+}
+
+.is-loading input {
+    padding-right: calc(1.5em + 0.75rem);
+}
+
+.is-loading .spinner-grow {
+    top: calc( (0.375em + 0.1875rem) + 2px);
+    right: calc(0.375em + 0.875rem);
+    position: absolute;
+}
