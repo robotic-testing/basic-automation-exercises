@@ -2,4 +2,9 @@
 
 require './config/environment'
 
+use TodoController
+use SimpleLoginController
+use SkeletonsController
+use UsernameAvailabilityController
+
 run HomeController

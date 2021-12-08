@@ -5,7 +5,7 @@ require 'sinatra/content_for'
 require 'sinatra/namespace'
 require 'sinatra/json'
 
-class BasicController < Sinatra::Base
+class BaseController < Sinatra::Base
   helpers Sinatra::ContentFor
   register Sinatra::Namespace
 
