@@ -30,6 +30,7 @@ GEM
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
     regexp_parser (2.1.1)
+    require_all (3.0.0)
     rspec (3.10.0)
       rspec-core (~> 3.10.0)
       rspec-expectations (~> 3.10.0)
@@ -67,6 +68,7 @@ PLATFORMS
 DEPENDENCIES
   capybara
   rack-test
+  require_all
   rspec
   shotgun
   sinatra (~> 2)

@@ -1,3 +1,5 @@
-require_relative './main'
+# frozen_string_literal: true
 
-run AutomationInPracticeApp
+require './config/environment'
+
+run HomeController

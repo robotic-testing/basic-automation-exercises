@@ -9,6 +9,7 @@ ruby '2.6.6'
 gem 'shotgun'
 gem 'sinatra', '~> 2'
 gem 'sinatra-contrib', '~> 2'
+gem 'require_all'
 
 group :test do
   gem 'capybara'
