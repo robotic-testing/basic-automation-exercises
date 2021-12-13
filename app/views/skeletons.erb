@@ -1,7 +1,3 @@
-<% content_for :content_javascript_head do %>
-  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-<% end %>
-
 <div class="row justify-content-center mb-5">
   <div class="col-10">
     <div class="card">
@@ -20,48 +16,45 @@
   </div>
 </div>
 
-<div class="row justify-content-center mb-2" id="skeletonsApp">
-  <div class="row justify-content-center" >
-    <template v-if="loading">
-      <div class="col-4 mb-2 skeletons-container" v-for="skeleton in expectedContent">
-        <div class="card" aria-hidden="true">
-          <svg class="bd-placeholder-img card-img-top" width="100%" height="180"
-               xmlns="http://www.w3.org/2000/svg" role="img"
-               :aria-label="'Skeleton ' + skeleton"
-               preserveAspectRatio="xMidYMid slice" focusable="false">
-            <title>Skeleton {{skeleton}}</title>
-            <rect width="100%" height="100%" fill="#868e96"></rect>
-          </svg>
-          <div class="card-body">
-            <h5 class="card-title placeholder-glow">
-              <span class="placeholder col-6"></span>
-            </h5>
-            <p class="card-text placeholder-glow">
-              <span class="placeholder col-7"></span>
-              <span class="placeholder col-4"></span>
-              <span class="placeholder col-4"></span>
-              <span class="placeholder col-6"></span>
-              <span class="placeholder col-8"></span>
-            </p>
-            <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-6"></a>
-          </div>
+
+<div id="skeletonsApp">
+  <div class="container">
+    <b-skeleton-wrapper :loading="loading" class="row">
+      <template #loading>
+        <div class="col" v-for="skeleton in expectedContent">
+          <b-card no-body>
+            <b-skeleton-img></b-skeleton-img>
+            <b-card-body>
+              <b-card-title>
+                <b-skeleton width="55%"></b-skeleton>
+              </b-card-title>
+
+              <b-card-text>
+                <b-skeleton width="55%"></b-skeleton>
+                <b-skeleton width="85%"></b-skeleton>
+                <b-skeleton width="70%"></b-skeleton>
+                <b-skeleton width="55%"></b-skeleton>
+              </b-card-text>
+
+              <b-skeleton type="button"></b-skeleton>
+            </b-card-body>
+          </b-card>
         </div>
-      </div>
-    </template>
+      </template>
 
-    <template v-else>
-      <div class="col-4 mb-2" v-for="contentItem in contentList">
-        <div class="card">
-          <img :src="contentItem.img" class="card-img-top" alt="...">
-
-          <div class="card-body">
-            <h5 class="card-title">{{ contentItem.title }}</h5>
-            <p class="card-text"><small>{{ contentItem.synopsis }}</small></p>
+      <div class="row">
+        <div class="col" v-for="contentItem in contentList">
+          <b-card
+            :title="contentItem.title"
+            :img-src="contentItem.img"
+            img-top
+          >
+            <b-card-text>{{ contentItem.synopsis }}</b-card-text>
             <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
+          </b-card>
         </div>
       </div>
-    </template>
+    </b-skeleton-wrapper>
   </div>
 </div>
 

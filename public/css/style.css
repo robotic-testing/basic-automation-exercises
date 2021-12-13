@@ -16,3 +16,7 @@ main > .container {
     right: calc(0.375em + 0.875rem);
     position: absolute;
 }
+
+.text-decoration-line-through {
+    text-decoration: line-through!important;
+}

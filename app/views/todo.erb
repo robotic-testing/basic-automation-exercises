@@ -1,7 +1,3 @@
-<% content_for :content_javascript_head do %>
-<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-<% end %>
-
 <div class="row justify-content-center mb-5">
   <div class="col-10">
     <div class="card">
@@ -23,8 +19,8 @@
 
 <div class="row justify-content-center">
   <div class="col-6">
-    <div class="list-group" id="todoApp">
-      <label class="list-group-item">
+    <ul class="list-group" id="todoApp">
+      <li class="list-group-item">
         <input type="text" class="form-control w-100 border-0" ref="newTaskInput"
                placeholder="Add a new task..."
                title="Type the task and hit enter to save"
@@ -32,35 +28,33 @@
                v-model.trim="newTask"
                maxlength="100"
         >
-      </label>
-      <label class="list-group-item d-flex gap-3 task"
-             v-for="todo in orderedTasks" :key="todo.id"
-             v-bind:class="{ 'bg-light': todo.completed }"
+      </li>
+      <li class="list-group-item d-flex align-items-center"
+          v-for="todo in orderedTasks" :key="todo.id"
+          v-bind:class="{ 'bg-light': todo.completed }"
       >
-
-        <input class="form-check-input flex-shrink-0" type="checkbox"
-               style="font-size: 1.375em;"
-               v-model="todo.completed"
-        >
-
-        <span class="pt-1 form-checked-content"
-              v-bind:class="{ 'text-muted text-decoration-line-through': todo.completed }"
-        >
-          {{ todo.text }}
-        </span>
-
+        <div class="form-check flex-grow-1">
+          <input class="form-check-input" type="checkbox" style="font-size: 1.375em;"
+                 :id="'check-'+todo.id"
+                 v-model="todo.completed">
+          <label class="form-check-label" :for="'check-'+todo.id"
+                 v-bind:class="{ 'text-muted text-decoration-line-through': todo.completed }"
+          >
+            {{ todo.text }}
+          </label>
+        </div>
         <a href="javascript:void(0)" class="ms-auto p-1" title="Remove task"
            v-on:click="onRemoveClick(todo.id)"
         >
           <i class="fas fa-trash-alt"></i>
         </a>
-      </label>
-      <label class="list-group-item d-flex bg-light" v-if="isTodoListEmpty()">
+      </li>
+      <li class="list-group-item bg-light" v-if="isTodoListEmpty()">
         <p class="mb-0 text-muted">
-          <small><em>There are no tasks created</em></small>
+          <em>There are no tasks created</em>
         </p>
-      </label>
-    </div>
+      </li>
+    </ul>
   </div>
 </div>
 
