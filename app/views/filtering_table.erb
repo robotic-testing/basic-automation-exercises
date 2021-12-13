@@ -1,0 +1,299 @@
+<% content_for :content_javascript_head do %>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+<% end %>
+
+<div class="row justify-content-center mb-5">
+  <div class="col-10">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Table List with Filters</h5>
+        <p class="card-text">
+          The form can be used to filter result in the table list and the column heads with arrows can be sorted by just
+          clicking on it. By clicking on "Show Details", it displays extra info about the line clicked. The lines are
+          sorted initially by "Birth Date". The "Age" columns is calculated just by the year, not considering day and month
+        </p>
+        <ul class="list-unstyled">
+          <li><b>Filter: </b> Search either for first name or last name. Use the "Filter On" to change the way of filtering.</li>
+          <li>
+            <b>Birth Date: </b> When selecting date in the "From" field, it will display birth dates that match
+            with the one selected in the field. When selecting "From" and "To", it will display records with birth date
+            that match in between date selected in "From" and "To".
+          </li>
+          <li>
+            <b>Only active: </b> When checked (in blue), displays only active records.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tableListFilter">
+  <b-container fluid>
+    <div>
+      <b-form @submit="onSubmit" @reset="onReset" class="mb-2">
+        <b-row>
+          <b-col lg="6">
+            <b-form-group id="queryFilter" label="Filter" label-for="input-1" label-size="sm" label-class="mb-0">
+              <b-form-input
+                id="queryFilter"
+                size="sm"
+                v-model="formFilter.query"
+                placeholder="Type your query here"
+              ></b-form-input>
+            </b-form-group>
+          </b-col>
+          <b-col>
+            <b-form-group
+              v-model="formFilter.filterOn"
+              label="Filter On"
+              label-size="sm" label-class="mb-0"
+              v-slot="{ ariaDescribedby }"
+            >
+              <b-form-checkbox-group
+                v-model="formFilter.filterOn"
+                :aria-describedby="ariaDescribedby"
+              >
+                <b-form-checkbox value="first_name">First name</b-form-checkbox>
+                <b-form-checkbox value="last_name">Last name</b-form-checkbox>
+              </b-form-checkbox-group>
+            </b-form-group>
+          </b-col>
+        </b-row>
+
+        <b-row>
+          <b-col cols="6">
+            <b-form-group label="Birth Date" label-for="birthDateFrom" label-size="sm" label-class="mb-0">
+              <b-row>
+                <b-col>
+                  <b-form-datepicker
+                    id="birthDateFrom"
+                    v-model="formFilter.birthDateStart"
+                    :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
+                    placeholder="From"
+                    size="sm"
+                    locale="en-US"
+                    reset-button
+                    hide-header
+                  ></b-form-datepicker>
+                </b-col>
+                <b-col>
+                  <b-form-datepicker
+                    v-model="formFilter.birthDateEnd"
+                    :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
+                    placeholder="To"
+                    size="sm"
+                    locale="en-US"
+                    reset-button
+                    hide-header
+                  ></b-form-datepicker>
+                </b-col>
+              </b-row>
+            </b-form-group>
+          </b-col>
+
+        </b-row>
+
+        <b-row>
+          <b-col>
+            <b-form-group>
+              <b-form-checkbox v-model="formFilter.onlyActive" name="check-button" size="sm" switch>
+                Only active
+              </b-form-checkbox>
+            </b-form-group>
+          </b-col>
+          <b-col cols="3" class="text-right">
+            <b-button type="submit" variant="primary" size="sm">
+              <i class="fas fa-search"></i>
+              Filter
+            </b-button>
+            <b-button type="reset" size="sm" variant="light">Clear</b-button>
+          </b-col>
+        </b-row>
+      </b-form>
+    </div>
+
+    <b-table
+      :items="itemsProvider"
+      :fields="fields"
+      :filter="filter"
+      :busy.sync="isBusy"
+      :current-page="currentPage"
+      :per-page="perPage"
+      :sort-by.sync="sortBy"
+      :sort-direction="sortDirection"
+      sort-icon-left
+      striped
+      show-empty
+    >
+      <template #cell(actions)="row">
+        <b-button size="sm" @click="row.toggleDetails">
+          {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
+        </b-button>
+      </template>
+
+      <template #row-details="row">
+        <b-card>
+          <b-row class="mb-2">
+            <b-col sm="3" class="text-sm-right"><b>Name:</b></b-col>
+            <b-col>{{ row.item.first_name }} {{ row.item.last_name }}</b-col>
+          </b-row>
+
+          <b-row class="mb-2">
+            <b-col sm="3" class="text-sm-right"><b>Birth date:</b></b-col>
+            <b-col>{{ row.item.birth_date }} ({{ row.item.age }})</b-col>
+          </b-row>
+
+          <b-row class="mb-2">
+            <b-col offset-md="3">{{ row.item.is_active ? 'Active' : 'Inactive' }}</b-col>
+          </b-row>
+        </b-card>
+      </template>
+    </b-table>
+
+    <div class="d-flex flex-row">
+      <div class="mr-auto align-self-center">
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="totalRows"
+          :per-page="perPage"
+          :disabled="isBusy"
+          class="d-inline-flex"
+        ></b-pagination>
+
+        <b-form-group
+          label="Per page"
+          label-for="per-page-select"
+          label-align-sm="right"
+          label-size="sm"
+          class="d-inline-flex ms-3"
+        >
+          <b-form-select
+            id="per-page-select"
+            v-model="perPage"
+            size="sm"
+            :options="pageOptions"
+            class="form-select form-select-sm ms-1"
+          ></b-form-select>
+        </b-form-group>
+      </div>
+      <div class="ml-auto">
+        <b-spinner small label="loading..." v-if="isBusy"></b-spinner>
+        <div v-if="showTotalRows()">Total Rows: <b>{{totalRows}}</b></div>
+      </div>
+    </div>
+  </b-container>
+</div>
+
+<% content_for :content_javascript_bottom do %>
+  <script>
+
+    new Vue({
+      el: '#tableListFilter',
+      data() {
+        return {
+          isBusy: false,
+          sortBy: 'birth_date',
+          sortDirection: 'asc',
+          fields: [
+            { key: 'first_name', sortable: true },
+            { key: 'last_name', sortable: true },
+            { key: 'birth_date', sortable: true },
+            { key: 'age', sortable: false },
+            { key: 'actions', sortable: false }
+          ],
+          totalRows: 0,
+          currentPage: 1,
+          perPage: 5,
+          pageOptions: [5, 10, 15],
+          filter: null,
+          formFilter: {
+            query: null,
+            birthDateStart: null,
+            birthDateEnd: null,
+            onlyActive: false,
+            filterOn: []
+          },
+        }
+      },
+      methods: {
+        showTotalRows() {
+          return this.totalRows > 0 && !this.isBusy;
+        },
+        itemsProvider(ctx) {
+          let query = new URLSearchParams();
+          query.append('page', ctx.currentPage);
+          query.append('size', ctx.perPage);
+          query.append('sort_by', ctx.sortBy);
+          query.append('sort_direction', ctx.sortDesc ? 'desc' : 'asc');
+
+          if(ctx.filter) {
+            if(ctx.filter.query) {
+              query.append('query', ctx.filter.query);
+
+              if(ctx.filter.filterOn) {
+                ctx.filter.filterOn.forEach(filterOn => query.append('filter_on[]', filterOn));
+              }
+            }
+
+            if(ctx.filter.onlyActive) {
+              query.append('only_active', ctx.filter.onlyActive);
+            }
+
+            if(ctx.filter.birthDateStart) {
+              query.append('birth_date_start', ctx.filter.birthDateStart);
+
+              if(ctx.filter.birthDateEnd) {
+                query.append('birth_date_end', ctx.filter.birthDateEnd);
+              }
+            }
+          }
+
+          let promise = axios.get(`/filtering-table/items?${query.toString()}`);
+
+          return promise
+            .then((response) => {
+              this.totalRows = parseInt(response.data.totalItems, 10);
+              response.data.items.forEach((item) => {
+                let formattedAge = '-';
+                let calculatedAge = new Date().getFullYear() - new Date(item.birth_date).getFullYear();
+
+                if(!isNaN(calculatedAge)) {
+                  formattedAge = calculatedAge.toString().padStart(2, '0');
+                }
+
+                item.age = formattedAge;
+              });
+              return response.data.items;
+            }).catch(() => [])
+        },
+        onSubmit(event) {
+          event.preventDefault();
+
+          if(this.isBusy) {
+            return;
+          }
+
+          this.currentPage = 1;
+          this.filter = Object.assign({}, this.formFilter);
+        },
+        onReset(event) {
+          event.preventDefault();
+
+          this.formFilter.query = null;
+          this.formFilter.onlyActive = false;
+          this.formFilter.birthDateStart = null;
+          this.formFilter.birthDateEnd = null;
+          this.formFilter.filterOn = [];
+
+          // Trick to reset/clear native browser form validation state
+          this.show = false;
+          this.$nextTick(() => {
+            this.show = true
+          })
+        },
+      }
+    });
+  </script>
+<% end %>
