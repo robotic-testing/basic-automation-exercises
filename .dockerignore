@@ -1,0 +1,10 @@
+# Folders
+spec
+.github
+
+# Files
+.rspec
+.ruby-version
+.tool-versions
+
+Dockerfile
