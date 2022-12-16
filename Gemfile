@@ -10,6 +10,7 @@ gem 'shotgun'
 gem 'sinatra', '~> 2'
 gem 'sinatra-contrib', '~> 2'
 gem 'require_all'
+gem 'puma'
 
 group :test do
   gem 'capybara'

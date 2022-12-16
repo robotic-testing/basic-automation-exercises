@@ -7,6 +7,8 @@ WORKDIR /app
 ADD Gemfile /app/Gemfile
 ADD Gemfile.lock /app/Gemfile.lock
 
+RUN apk add build-base
+
 RUN echo 'gem: --no-rdoc --no-ri' >> "/root/.gemrc" \
     && gem install bundler -v $BUNDLER_VERSION \
     && bundle config deployment 'true' \
@@ -17,4 +19,4 @@ ADD . /app
 
 EXPOSE 4567
 
-CMD ["ruby", "app.rb"]
+CMD ["bundle", "exec", "rackup", "--host", "0.0.0.0", "-p", "4567"]

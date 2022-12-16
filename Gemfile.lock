@@ -19,10 +19,13 @@ GEM
     multi_json (1.15.0)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
+    nio4r (2.5.8)
     nokogiri (1.12.5)
       mini_portile2 (~> 2.6.1)
       racc (~> 1.4)
     public_suffix (4.0.6)
+    puma (6.0.0)
+      nio4r (~> 2.0)
     racc (1.6.0)
     rack (2.2.3)
     rack-protection (2.1.0)
@@ -67,6 +70,7 @@ PLATFORMS
 
 DEPENDENCIES
   capybara
+  puma
   rack-test
   require_all
   rspec
@@ -75,7 +79,7 @@ DEPENDENCIES
   sinatra-contrib (~> 2)
 
 RUBY VERSION
-   ruby 2.6.6p146
+   ruby 3.0.4p208
 
 BUNDLED WITH
-   2.2.21
+   2.2.33
