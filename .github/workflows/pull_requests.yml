@@ -1,8 +1,6 @@
-name: AiP CI
+name: Workflow for pull request
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 
