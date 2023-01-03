@@ -16,3 +16,18 @@ jobs:
 
     - name: Run tests
       run: bundle exec rspec
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build and push
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        push: false
+        tags: robotictesting/basic-automation-exercises:latest
+        cache-from: type=registry,ref=robotictesting/basic-automation-exercises:latest
+        cache-to: type=inline
