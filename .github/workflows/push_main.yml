@@ -27,7 +27,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         context: .
-        push: false
+        push: true
         tags: robotictesting/basic-automation-exercises:latest
         cache-from: type=registry,ref=robotictesting/basic-automation-exercises:latest
         cache-to: type=inline
